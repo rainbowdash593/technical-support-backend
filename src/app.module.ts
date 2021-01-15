@@ -1,25 +1,29 @@
+import { config as dotenvConfig } from 'dotenv';
 import { Module } from '@nestjs/common';
 import { APP_GUARD } from '@nestjs/core';
 import { MongooseModule } from '@nestjs/mongoose';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { RolesGuard } from './users/guards/roles.guard';
 import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
 
+//TODO use config module
+dotenvConfig();
+
 @Module({
   imports: [
-    //TODO use .env vars
-    // MongooseModule.forRoot('mongodb://rainbowdash593:kes43211@localhost/nest', {
-    //   useNewUrlParser: true,
-    // }),
+    MongooseModule.forRoot(
+      `mongodb://${process.env.DATABASE_USER}:${process.env.DATABASE_PASSWORD}@localhost:27017/${process.env.DATABASE_NAME}`,
+      {
+        useNewUrlParser: true,
+        authSource: 'admin',
+      },
+    ),
     AuthModule,
     UsersModule,
   ],
-  controllers: [AppController],
+  controllers: [],
   providers: [
-    AppService,
     {
       provide: APP_GUARD,
       useClass: JwtAuthGuard,
