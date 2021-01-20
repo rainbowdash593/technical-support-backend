@@ -16,9 +16,9 @@ export const UserSchema = new mongoose.Schema({
     },
   ],
   roles: { type: [String], required: true, enum: Object.values(Role) },
-  created_at: { type: Date, required: true },
-  updated_at: { type: Date, required: true },
-  logged_at: { type: Date, required: false },
+  createdAt: { type: Date, required: true },
+  updatedAt: { type: Date, required: true },
+  loggedAt: { type: Date, required: false },
 });
 
 UserSchema.index({ email: 1 }, { unique: true });

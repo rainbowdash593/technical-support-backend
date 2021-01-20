@@ -29,8 +29,8 @@ export class UsersService {
       _.assignIn(createUserDto, {
         roles,
         password: hash,
-        created_at: moment().toDate(),
-        updated_at: moment().toDate(),
+        createdAt: moment().toDate(),
+        updatedAt: moment().toDate(),
       }),
     );
     return await createdUser.save();

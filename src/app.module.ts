@@ -6,6 +6,10 @@ import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { RolesGuard } from './users/guards/roles.guard';
 import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
+import { MembersModule } from './members/members.module';
+import { ProjectsModule } from './projects/projects.module';
+import { TicketsModule } from './tickets/tickets.module';
+import { TicketMessagesModule } from './ticket-messages/ticket-messages.module';
 
 //TODO use config module
 dotenvConfig();
@@ -21,6 +25,10 @@ dotenvConfig();
     ),
     AuthModule,
     UsersModule,
+    MembersModule,
+    ProjectsModule,
+    TicketsModule,
+    TicketMessagesModule,
   ],
   controllers: [],
   providers: [

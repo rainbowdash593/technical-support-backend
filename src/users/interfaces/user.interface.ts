@@ -9,9 +9,9 @@ export interface IUser extends Document {
   readonly password: string;
   readonly messengers: IMessenger[];
   readonly roles: string[];
-  readonly created_at: Date;
-  readonly updated_at: Date;
-  readonly logged_at?: Date;
+  readonly createdAt: Date;
+  readonly updatedAt: Date;
+  readonly loggedAt?: Date;
 }
 
 export interface IUserDocument extends IUser {
