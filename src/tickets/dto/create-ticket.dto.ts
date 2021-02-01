@@ -29,7 +29,7 @@ export class CreateTicketDto {
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
-  readonly projectId: string;
+  readonly project: string;
 
   @ApiProperty({ type: CreateRelatedUserDto })
   @IsNotEmpty()

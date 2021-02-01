@@ -28,7 +28,10 @@ export class TicketMessagesService {
   }
 
   async byTicket(ticketId: string): Promise<ITicketMessageDocument[]> {
-    return this.messageModel.find({ ticketId: ticketId });
+    return this.messageModel
+      .find({ ticket: ticketId })
+      .populate('user')
+      .sort({ createdAt: 'asc' });
   }
 
   async markAsRead(ticketId: string): Promise<IUpdatedEntitiesResponse> {
@@ -53,28 +56,39 @@ export class TicketMessagesService {
       attachments: attachments || [],
       relatedId: createIncomingMessageDto.id,
       relatedUser: createIncomingMessageDto.user,
-      ticketId: ticket._id,
+      ticket: ticket._id,
       type: TicketMessageType.INCOMING,
       createdAt: moment().toDate(),
       updatedAt: moment().toDate(),
       postedAt: moment.unix(createIncomingMessageDto.postedAt).toDate(),
     });
-    return await message.save();
+    const savedMessage = await message.save();
+    await ticket.updateLastMessageDate(savedMessage);
+    return savedMessage;
   }
 
   async outgoing(
     user: IReadableUser,
     createOutgoingMessageDto: CreateOutgoingMessageDto,
   ): Promise<ITicketMessageDocument> {
+    const ticket = await this.ticketsService.findBy({
+      _id: createOutgoingMessageDto.ticket,
+    });
+    if (!ticket) throw new NotFoundException('Ticket not found!');
     const message = new this.messageModel(
       _.assignIn(createOutgoingMessageDto, {
-        type: TicketMessageType.INCOMING,
-        userId: user._id,
+        type: TicketMessageType.OUTGOING,
+        user: user._id,
         createdAt: moment().toDate(),
         updatedAt: moment().toDate(),
         postedAt: moment().toDate(),
       }),
     );
-    return await message.save();
+    const savedMessage = await message.save();
+    await ticket.updateLastMessageDate(savedMessage);
+    return await savedMessage
+      .populate('user')
+      .populate('ticket')
+      .execPopulate();
   }
 }

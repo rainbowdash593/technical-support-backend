@@ -17,7 +17,12 @@ export class TicketsService {
   }
 
   async getOrderedByLastMessage(limit: number): Promise<ITicketDocument[]> {
-    return this.ticketModel.find().sort({ lastMessageAt: 'desc' }).limit(limit);
+    const tickets = this.ticketModel
+      .find()
+      .populate('project')
+      .populate({ path: 'lastMessage', populate: { path: 'user' } })
+      .sort({ lastMessageAt: 'desc' });
+    return limit ? tickets.limit(limit) : tickets;
   }
 
   async find(id: string): Promise<ITicketDocument> {
@@ -29,24 +34,12 @@ export class TicketsService {
   }
 
   async create(createTicketDto: CreateTicketDto): Promise<ITicketDocument> {
-    const member = new this.ticketModel(
+    const ticket = new this.ticketModel(
       _.assignIn(createTicketDto, {
         createdAt: moment().toDate(),
         updatedAt: moment().toDate(),
       }),
     );
-    return await member.save();
-  }
-
-  async updateLastMessageDate(
-    id: string,
-    date: Date = moment().toDate(),
-  ): Promise<void> {
-    await this.ticketModel.updateOne(
-      { _id: id },
-      {
-        lastMessageAt: date,
-      },
-    );
+    return await ticket.save();
   }
 }

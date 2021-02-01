@@ -10,8 +10,8 @@ export const TicketMessageSchema = new mongoose.Schema({
   text: { type: String, required: true },
   relatedId: { type: Number, required: false },
   relatedUser: { id: Number, email: String },
-  userId: { type: mongoose.Types.ObjectId, required: false, ref: 'User' },
-  ticketId: { type: mongoose.Types.ObjectId, required: true, ref: 'Ticket' },
+  user: { type: mongoose.Types.ObjectId, required: false, ref: 'User' },
+  ticket: { type: mongoose.Types.ObjectId, required: true, ref: 'Ticket' },
   attachments: [
     {
       mimetype: String,

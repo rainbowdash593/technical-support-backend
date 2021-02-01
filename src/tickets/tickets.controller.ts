@@ -21,8 +21,8 @@ import { IUpdatedEntitiesResponse } from '../common/interfaces/updated-entities-
 export class TicketsController {
   constructor(
     private readonly ticketService: TicketsService,
-  ) // private readonly messageService: TicketMessagesService,
-  {}
+    private readonly messageService: TicketMessagesService,
+  ) {}
 
   @Get('/')
   async getList(): Promise<ITicketDocument[]> {
@@ -31,7 +31,7 @@ export class TicketsController {
 
   @Get('/last')
   async getByLastMessage(@Query() { limit }): Promise<ITicketDocument[]> {
-    return this.ticketService.getOrderedByLastMessage(+limit || 5);
+    return this.ticketService.getOrderedByLastMessage(+limit || 0);
   }
 
   @ApiParam({ name: 'id', type: String })
@@ -47,14 +47,14 @@ export class TicketsController {
     return this.ticketService.create(createTicketDto);
   }
 
-  // @ApiParam({ name: 'id', type: String })
-  // @Get('/:id/messages')
-  // async byTicket(@Param() { id }): Promise<ITicketMessageDocument[]> {
-  //   return this.messageService.byTicket(id);
-  // }
-  //
-  // @Post('/:id/messages/read')
-  // async markRead(@Param() { id }): Promise<IUpdatedEntitiesResponse> {
-  //   return this.messageService.markAsRead(id);
-  // }
+  @ApiParam({ name: 'id', type: String })
+  @Get('/:id/messages')
+  async byTicket(@Param() { id }): Promise<ITicketMessageDocument[]> {
+    return this.messageService.byTicket(id);
+  }
+
+  @Post('/:id/messages/read')
+  async markRead(@Param() { id }): Promise<IUpdatedEntitiesResponse> {
+    return this.messageService.markAsRead(id);
+  }
 }

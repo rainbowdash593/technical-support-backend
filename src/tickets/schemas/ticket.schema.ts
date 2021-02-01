@@ -1,6 +1,10 @@
 import * as mongoose from 'mongoose';
 import { RelatedUserType } from '../enums/related-user-type.enum';
 import { TicketStatus } from '../enums/ticket-status.enum';
+import { IReadableUser } from '../../users/interfaces/readable-user.interface';
+import { ProtectedUserFields } from '../../users/enums/protected-fields.enum';
+import { ITicketMessageDocument } from '../../ticket-messages/interfaces/ticket-message.interface';
+import * as moment from 'moment';
 
 export const TicketSchema = new mongoose.Schema({
   status: {
@@ -9,7 +13,7 @@ export const TicketSchema = new mongoose.Schema({
     default: TicketStatus.Open,
   },
   tags: { type: [String], required: false },
-  projectId: { type: mongoose.Types.ObjectId, required: true, ref: 'Project' },
+  project: { type: mongoose.Types.ObjectId, required: true, ref: 'Project' },
   relatedId: { type: Number, required: true },
   user: {
     id: { type: Number, required: true },
@@ -26,5 +30,19 @@ export const TicketSchema = new mongoose.Schema({
   },
   createdAt: { type: Date, required: true },
   updatedAt: { type: Date, required: true },
+  lastMessage: {
+    type: mongoose.Types.ObjectId,
+    required: false,
+    ref: 'TicketMessage',
+  },
   lastMessageAt: { type: Date, required: false },
 });
+
+TicketSchema.methods.updateLastMessageDate = async function (
+  message: ITicketMessageDocument,
+  date: Date = moment().toDate(),
+): Promise<void> {
+  this.lastMessageAt = date;
+  this.lastMessage = message._id;
+  this.save();
+};

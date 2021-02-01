@@ -16,7 +16,7 @@ export class CreateOutgoingMessageDto {
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
-  readonly ticketId: string;
+  readonly ticket: string;
 
   @ApiPropertyOptional({ type: CreateMessageAttachmentsDto })
   @IsOptional()
