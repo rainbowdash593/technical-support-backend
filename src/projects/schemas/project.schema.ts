@@ -4,7 +4,7 @@ import * as mongoose_delete from 'mongoose-delete';
 export const ProjectSchema = new mongoose.Schema({
   name: String,
   token: String,
-  url: String,
+  panelUrl: String,
   createdAt: String,
   updatedAt: String,
 });

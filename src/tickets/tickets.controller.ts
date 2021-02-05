@@ -14,6 +14,7 @@ import { CreateTicketDto } from './dto/create-ticket.dto';
 import { TicketMessagesService } from '../ticket-messages/ticket-messages.service';
 import { ITicketMessageDocument } from '../ticket-messages/interfaces/ticket-message.interface';
 import { IUpdatedEntitiesResponse } from '../common/interfaces/updated-entities-response.interface';
+import { Public } from '../auth/guards/public-route.guard';
 
 @ApiBearerAuth()
 @ApiTags('tickets')
@@ -30,10 +31,21 @@ export class TicketsController {
   }
 
   @Get('/last')
-  async getByLastMessage(@Query() { limit }): Promise<ITicketDocument[]> {
+  async getLastTickets(@Query() { limit }): Promise<ITicketDocument[]> {
     return this.ticketService.getOrderedByLastMessage(+limit || 0);
   }
 
+  @ApiParam({ name: 'id', type: String })
+  @Get('/last/:id')
+  async getLastTicketsByProject(
+    @Query() { limit },
+    @Param() { id },
+  ): Promise<ITicketDocument[]> {
+    return this.ticketService.getLastTicketsByProject(id, +limit || 0);
+  }
+
+  //TODO protect route
+  @Public()
   @ApiParam({ name: 'id', type: String })
   @Get('/:id')
   async find(@Param() { id }): Promise<ITicketDocument> {
@@ -47,6 +59,8 @@ export class TicketsController {
     return this.ticketService.create(createTicketDto);
   }
 
+  //TODO protect route
+  @Public()
   @ApiParam({ name: 'id', type: String })
   @Get('/:id/messages')
   async byTicket(@Param() { id }): Promise<ITicketMessageDocument[]> {

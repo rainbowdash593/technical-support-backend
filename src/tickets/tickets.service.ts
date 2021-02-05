@@ -16,6 +16,20 @@ export class TicketsService {
     return this.ticketModel.find();
   }
 
+  async getLastTicketsByProject(
+    id: string,
+    limit: number,
+  ): Promise<ITicketDocument[]> {
+    const tickets = this.ticketModel
+      .find()
+      .where('project')
+      .equals(id)
+      .populate('project')
+      .populate({ path: 'lastMessage', populate: { path: 'user' } })
+      .sort({ lastMessageAt: 'desc' });
+    return limit ? tickets.limit(limit) : tickets;
+  }
+
   async getOrderedByLastMessage(limit: number): Promise<ITicketDocument[]> {
     const tickets = this.ticketModel
       .find()
@@ -26,7 +40,7 @@ export class TicketsService {
   }
 
   async find(id: string): Promise<ITicketDocument> {
-    return this.ticketModel.findOne({ _id: id });
+    return this.ticketModel.findOne({ _id: id }).populate('project');
   }
 
   async findBy(filter): Promise<ITicketDocument> {

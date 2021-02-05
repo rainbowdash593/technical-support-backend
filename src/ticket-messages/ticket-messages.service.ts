@@ -10,6 +10,8 @@ import { IUpdatedEntitiesResponse } from '../common/interfaces/updated-entities-
 import { CreateIncomingMessageDto } from './dto/create-incoming-message.dto';
 import { TicketMessageType } from './enums/message-type.enum';
 import { CreateOutgoingMessageDto } from './dto/create-outgoing-message.dto';
+import { MessageGateway } from '../socket/socket.gateway';
+import { BroadcastEvents } from '../socket/enums/broadcast-events.enum';
 
 @Injectable()
 export class TicketMessagesService {
@@ -17,6 +19,7 @@ export class TicketMessagesService {
     @InjectModel('TicketMessage')
     private readonly messageModel: Model<ITicketMessageDocument>,
     private readonly ticketsService: TicketsService,
+    private readonly messageGateway: MessageGateway,
   ) {}
 
   async get(): Promise<ITicketMessageDocument[]> {
@@ -25,6 +28,10 @@ export class TicketMessagesService {
 
   async find(id: string): Promise<ITicketMessageDocument> {
     return this.messageModel.findOne({ _id: id });
+  }
+
+  async broadcastMessage(message: ITicketMessageDocument) {
+    this.messageGateway.server.emit(BroadcastEvents.TICKET_MESSAGE, message);
   }
 
   async byTicket(ticketId: string): Promise<ITicketMessageDocument[]> {
@@ -62,8 +69,11 @@ export class TicketMessagesService {
       updatedAt: moment().toDate(),
       postedAt: moment.unix(createIncomingMessageDto.postedAt).toDate(),
     });
-    const savedMessage = await message.save();
+    const savedMessage = await message
+      .save()
+      .then((m) => m.populate('ticket').execPopulate());
     await ticket.updateLastMessageDate(savedMessage);
+    this.broadcastMessage(savedMessage);
     return savedMessage;
   }
 

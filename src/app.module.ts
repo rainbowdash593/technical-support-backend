@@ -10,6 +10,10 @@ import { MembersModule } from './members/members.module';
 import { ProjectsModule } from './projects/projects.module';
 import { TicketsModule } from './tickets/tickets.module';
 import { TicketMessagesModule } from './ticket-messages/ticket-messages.module';
+import { TeamModule } from './team/team.module';
+import { TelegramModule } from './telegram/telegram.module';
+import { TeamMessagesModule } from './team-messages/team-messages.module';
+import { SocketModule } from './socket/socket.module';
 
 //TODO use config module
 dotenvConfig();
@@ -29,6 +33,10 @@ dotenvConfig();
     ProjectsModule,
     TicketsModule,
     TicketMessagesModule,
+    TeamModule,
+    TelegramModule,
+    TeamMessagesModule,
+    SocketModule,
   ],
   controllers: [],
   providers: [

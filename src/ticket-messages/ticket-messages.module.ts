@@ -4,6 +4,7 @@ import { TicketMessagesService } from './ticket-messages.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { TicketMessageSchema } from './schemas/ticket-message.schema';
 import { TicketsModule } from '../tickets/tickets.module';
+import { SocketModule } from '../socket/socket.module';
 
 @Module({
   imports: [
@@ -11,6 +12,7 @@ import { TicketsModule } from '../tickets/tickets.module';
     MongooseModule.forFeature([
       { name: 'TicketMessage', schema: TicketMessageSchema },
     ]),
+    SocketModule,
   ],
   controllers: [TicketMessagesController],
   providers: [TicketMessagesService],

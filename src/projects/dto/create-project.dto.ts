@@ -10,7 +10,7 @@ export class CreateProjectDto {
   @ApiProperty()
   @IsUrl()
   @IsNotEmpty()
-  readonly url: string;
+  readonly panelUrl: string;
 
   readonly token: string;
   readonly createdAt: Date;
